@@ -16,14 +16,8 @@ fn part1(input: Vec<&str>) {
         }
 
         let mut amount = "".to_string();
-        if digit.len() == 1 {
-            amount.push(digit[0]);
-            amount.push(digit[0]);
-        }
-        else {
-            amount.push(*digit.first().unwrap());
-            amount.push(*digit.last().unwrap());
-        }
+        amount.push(*digit.first().unwrap());
+        amount.push(*digit.last().unwrap());
 
         sum += amount.parse::<u32>().unwrap();
     }
