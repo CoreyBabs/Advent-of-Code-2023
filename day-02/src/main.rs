@@ -6,6 +6,7 @@ fn main() {
     let mut input = input.split("\n").collect::<Vec<&str>>();
     input.pop();
     part1(&input);
+    part2(&input);
 }
 
 fn part1(input: &Vec<&str>) {
@@ -13,6 +14,15 @@ fn part1(input: &Vec<&str>) {
         .map(|l| Game::from_line(l))
         .filter(|g| g.valid)
         .map(|g| g.id)
+        .sum();
+
+    println!("{}", sum);
+}
+
+fn part2(input: &Vec<&str>) {
+    let sum: u32 = input.iter()
+        .map(|l| Game::from_line(l))
+        .map(|g| g.red * g.green * g.blue)
         .sum();
 
     println!("{}", sum);
@@ -40,27 +50,6 @@ impl Game {
         id.parse::<u32>().unwrap()
     }
 
-    fn get_rgb(rounds: &str) -> (u32, u32, u32) {
-        let rounds: Vec<&str> = rounds.split(";").collect();
-        let mut r: u32 = 0;
-        let mut g: u32 = 0;
-        let mut b: u32 = 0;
-        for round in rounds {
-            let cubes: Vec<&str> = round.split(", ").collect();
-            cubes.iter()
-                .for_each(|c| {
-                    let count: Vec<&str> = c.trim().split(" ").collect();
-                    match count[1] {
-                        "red" => r += count[0].parse::<u32>().unwrap(),
-                        "green" => g += count[0].parse::<u32>().unwrap(),
-                        "blue" => b += count[0].parse::<u32>().unwrap(),
-                        _ => panic!("Invalid color")
-                    }
-                });
-        }
-
-        (r,g,b)
-    } 
 
     fn get_max_rgb(rounds: &str) -> (u32, u32, u32) {
         let rounds: Vec<&str> = rounds.split(";").collect();
@@ -83,6 +72,7 @@ impl Game {
 
         (r,g,b)
     } 
+
     fn check_valid(red: u32, green: u32, blue: u32) -> bool {
         let max_r = 12;
         let max_g = 13;
