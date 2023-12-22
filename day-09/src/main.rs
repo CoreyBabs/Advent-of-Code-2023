@@ -4,6 +4,7 @@ fn main() {
     input.pop();
 
     part1(&input);
+    part2(&input);
 }
 
 fn part1(input: &Vec<&str>) {
@@ -22,6 +23,27 @@ fn part1(input: &Vec<&str>) {
         let diffs = get_diffs(&i);
         let diffs = update_diffs_with_preds(diffs);
         total += diffs[0].last().unwrap();
+    }
+
+    println!("{:?}", total);
+}
+
+fn part2(input: &Vec<&str>) {
+    let input: Vec<Vec<&str>> = input.iter()
+        .map(|l| l.split(" ").collect::<Vec<&str>>()).collect();
+
+    let input: Vec<Vec<i64>> = input.iter()
+        .map(|l| l.iter()
+            .map(|i| i.parse::<i64>()
+                .expect("Not an i64"))
+            .collect())
+        .collect();
+    
+    let mut total = 0;
+    for i in input {
+        let diffs = get_diffs(&i);
+        let diffs = update_diffs_with_preds_front(diffs);
+        total += diffs[0][0];
     }
 
     println!("{:?}", total);
@@ -58,6 +80,19 @@ fn update_diffs_with_preds(mut diffs: Vec<Vec<i64>>) -> Vec<Vec<i64>> {
         let current = &mut diffs[i];
         let pred = current.last().unwrap();
         current.push(prev + pred);
+    }
+
+    diffs
+}
+
+fn update_diffs_with_preds_front(mut diffs: Vec<Vec<i64>>) -> Vec<Vec<i64>> {
+    diffs.last_mut().unwrap().insert(0, 0);
+    for i in (0..diffs.len() - 1).rev() {
+        let prev = &diffs[i+1].clone();
+        let prev = prev[0];
+        let current = &mut diffs[i];
+        let pred = current[0];
+        current.insert(0, pred - prev);
     }
 
     diffs
