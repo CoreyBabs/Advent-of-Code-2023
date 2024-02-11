@@ -32,19 +32,25 @@ defmodule Day1 do
     Integer.parse(combined)
   end
 
+  defp append_indices(line, indices, word, digit) do
+    words = scan_and_map_indices(line, word, digit)
+    indices = indices ++ words
+
+    nums = scan_and_map_indices(line, digit, digit)
+    indices ++ nums
+  end
+
+  defp scan_and_map_indices(line, src, dst) do
+    {_, r} = Regex.compile(src)
+    list = Regex.scan(r, line, return: :index)
+    Enum.map(list, fn t -> {elem(List.first(t), 0), dst} end)
+  end
+
   defp get_indices_of_numbers(line, indices, digits, total_digits) when length(digits) === 1 do
     head = hd(digits)
     v = total_digits[head]
 
-    {_, rhead} = Regex.compile(head)
-    words = Regex.scan(rhead, line, return: :index)
-    words = Enum.map(words, fn t -> {elem(List.first(t), 0), v} end)
-    indices = indices ++ words
-
-    {_, rv} = Regex.compile(v)
-    nums = Regex.scan(rv, line, return: :index)
-    nums = Enum.map(nums, fn t -> {elem(List.first(t), 0), v} end)
-    indices = indices ++ nums
+    indices = append_indices(line, indices, head, v)
     
     Enum.sort_by(indices, fn {value, _} -> value end)
   end
@@ -53,15 +59,7 @@ defmodule Day1 do
     [head | tail] = digits
     v = total_digits[head]
 
-    {_, rhead} = Regex.compile(head)
-    words = Regex.scan(rhead, line, return: :index)
-    words = Enum.map(words, fn t -> {elem(List.first(t), 0), v} end)
-    indices = indices ++ words
-
-    {_, rv} = Regex.compile(v)
-    nums = Regex.scan(rv, line, return: :index)
-    nums = Enum.map(nums, fn t -> {elem(List.first(t), 0), v} end)
-    indices = indices ++ nums
+    indices = append_indices(line, indices, head, v)
 
     get_indices_of_numbers(line, indices, tail, total_digits)
   end
